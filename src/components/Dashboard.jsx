@@ -90,12 +90,6 @@ export default function Dashboard({ logout, showToast }) {
             )
           })}
 
-          <Separator className="my-4" />
-
-          <div className="rounded-xl border border-border bg-muted/40 p-3 text-[11px] text-muted-foreground space-y-1">
-            <p className="font-semibold text-foreground text-xs">Webhooks</p>
-            <p>Configurá las URLs en <code className="bg-muted px-1 rounded text-[10px]">src/lib/webhooks.js</code> antes de publicar.</p>
-          </div>
         </aside>
 
         {/* Main card */}
