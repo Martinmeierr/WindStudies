@@ -9,9 +9,10 @@ export default function Login({ onLogin }) {
   const [error, setError] = useState('')
   const [shaking, setShaking] = useState(false)
 
-  function handleSubmit(e) {
+  async function handleSubmit(e) {
     e.preventDefault()
-    if (onLogin(pwd)) return
+    const ok = await onLogin(pwd)
+    if (ok) return
     setError('Contraseña incorrecta')
     setPwd('')
     setShaking(true)
