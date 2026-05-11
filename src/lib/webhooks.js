@@ -1,7 +1,8 @@
 export const WEBHOOKS = {
-  wf1: 'https://n8n.fluyafragancias.com/webhook/windstudies-wf1',
-  wf3: 'https://n8n.fluyafragancias.com/webhook/windstudies-wf3',
-  wf4: 'https://n8n.fluyafragancias.com/webhook/windstudies-wf4',
+  wf1:        'https://n8n.fluyafragancias.com/webhook/windstudies-wf1',
+  wf3:        'https://n8n.fluyafragancias.com/webhook/windstudies-wf3',
+  wf4:        'https://n8n.fluyafragancias.com/webhook/windstudies-wf4',
+  prospectos: 'https://n8n.fluyafragancias.com/webhook/windstudies-prospectos',
 }
 
 export async function callWebhook(url, body) {

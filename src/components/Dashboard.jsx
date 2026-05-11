@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { Wind, Sparkles, FolderOpen, UserPlus, LogOut } from 'lucide-react'
+import { Wind, Sparkles, FolderOpen, UserPlus, Users, LogOut } from 'lucide-react'
 import { cn }        from '@/lib/utils'
 import { Button }    from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card'
@@ -7,6 +7,7 @@ import { Separator } from '@/components/ui/separator'
 import WF1Ideas        from '@/components/tabs/WF1Ideas'
 import WF3Onboarding   from '@/components/tabs/WF3Onboarding'
 import WF4NuevoCliente from '@/components/tabs/WF4NuevoCliente'
+import WFProspectos    from '@/components/tabs/WFProspectos'
 
 const TABS = [
   {
@@ -29,6 +30,13 @@ const TABS = [
     icon:  UserPlus,
     desc:  'Creá la estructura en Drive y Notion para un nuevo cliente.',
     component: WF4NuevoCliente,
+  },
+  {
+    id:    'prospectos',
+    label: 'Prospectos Clientes',
+    icon:  Users,
+    desc:  'Buscá empresas por rubro y zona, y guardalas en Notion para aprobar.',
+    component: WFProspectos,
   },
 ]
 
