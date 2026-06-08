@@ -5,6 +5,8 @@ export const WEBHOOKS = {
   // wf4v2: WF4 v2 TEST en n8n (LuiOmc8afMqAdVk8) — estructura nueva según doc + Modelo B.
   wf4v2:      'https://n8n.fluyafragancias.com/webhook/windstudies-wf4v2',
   prospectos: 'https://n8n.fluyafragancias.com/webhook/windstudies-prospectos',
+  // clientes: lista las carpetas (COD) Nombre del Drive raíz para el generador de links de sondeo (GET).
+  clientes:   'https://n8n.fluyafragancias.com/webhook/windstudies-clientes',
 }
 
 export async function callWebhook(url, body) {

@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { Wind, Sparkles, FolderOpen, UserPlus, Rocket, Users, LogOut } from 'lucide-react'
+import { Wind, Sparkles, FolderOpen, UserPlus, Rocket, Link2, Users, LogOut } from 'lucide-react'
 import { cn }        from '@/lib/utils'
 import { Button }    from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card'
@@ -9,6 +9,7 @@ import WF3Onboarding   from '@/components/tabs/WF3Onboarding'
 import WF4NuevoCliente from '@/components/tabs/WF4NuevoCliente'
 import WF4v2NuevoCliente from '@/components/tabs/WF4v2NuevoCliente'
 import WFProspectos    from '@/components/tabs/WFProspectos'
+import GeneradorLinkSondeo from '@/components/tabs/GeneradorLinkSondeo'
 
 const TABS = [
   {
@@ -45,6 +46,13 @@ const TABS = [
     icon:  Users,
     desc:  'Buscá empresas por rubro y zona, y guardalas en Notion para aprobar.',
     component: WFProspectos,
+  },
+  {
+    id:    'sondeo-links',
+    label: 'Link Sondeo',
+    icon:  Link2,
+    desc:  'Generá el link del Sondeo Previo para cada cliente, con el código embebido.',
+    component: GeneradorLinkSondeo,
   },
 ]
 
