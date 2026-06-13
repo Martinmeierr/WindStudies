@@ -1,8 +1,7 @@
 export const WEBHOOKS = {
   wf1:        'https://n8n.fluyafragancias.com/webhook/windstudies-wf1',
   wf3:        'https://n8n.fluyafragancias.com/webhook/windstudies-wf3',
-  wf4:        'https://n8n.fluyafragancias.com/webhook/windstudies-wf4',
-  // wf4v2: WF4 v2 TEST en n8n (LuiOmc8afMqAdVk8) — estructura nueva según doc + Modelo B.
+  // wf4v2: el alta (única) — WF4 v2 en n8n (LuiOmc8afMqAdVk8), estructura flat.
   wf4v2:      'https://n8n.fluyafragancias.com/webhook/windstudies-wf4v2',
   prospectos: 'https://n8n.fluyafragancias.com/webhook/windstudies-prospectos',
   // clientes: lista las carpetas (COD) Nombre del Drive raíz para el generador de links de sondeo (GET).

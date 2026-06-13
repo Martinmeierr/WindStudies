@@ -1,12 +1,11 @@
 import { useState } from 'react'
-import { Wind, Sparkles, FolderOpen, UserPlus, Rocket, Link2, Users, Mic, LogOut } from 'lucide-react'
+import { Wind, Sparkles, FolderOpen, Rocket, Link2, Users, Mic, LogOut } from 'lucide-react'
 import { cn }        from '@/lib/utils'
 import { Button }    from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card'
 import { Separator } from '@/components/ui/separator'
 import WF1Ideas        from '@/components/tabs/WF1Ideas'
 import WF3Onboarding   from '@/components/tabs/WF3Onboarding'
-import WF4NuevoCliente from '@/components/tabs/WF4NuevoCliente'
 import WF4v2NuevoCliente from '@/components/tabs/WF4v2NuevoCliente'
 import WFProspectos    from '@/components/tabs/WFProspectos'
 import GeneradorLinkSondeo from '@/components/tabs/GeneradorLinkSondeo'
@@ -28,17 +27,10 @@ const TABS = [
     component: WF3Onboarding,
   },
   {
-    id:    'wf4',
-    label: 'Alta Cliente',
-    icon:  UserPlus,
-    desc:  'Creá la estructura en Drive y Notion para un nuevo cliente.',
-    component: WF4NuevoCliente,
-  },
-  {
     id:    'wf4v2',
-    label: 'Alta Cliente v2',
+    label: 'Alta Cliente',
     icon:  Rocket,
-    desc:  'Versión nueva del alta — payload estructurado y validación reforzada. No toca el alta actual.',
+    desc:  'Creá la estructura en Drive y Notion para un nuevo cliente.',
     component: WF4v2NuevoCliente,
   },
   {
