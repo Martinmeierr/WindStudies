@@ -20,6 +20,10 @@ const TIPOS = [
   { id: 'carrusel', label: 'Carruseles', key: 'Carrusel'  },
 ]
 
+// Duraciones (segundos) — sólo aplican a Reels. Viajan como "Duración: N" en el
+// payload; WF1 las parsea (duracion_seg) y bajan al guion/contenido vía la idea.
+const DURACIONES = [5, 10, 20, 30]
+
 const defaultChecked = { reel: true, post: false, story: false, carrusel: false }
 const defaultCounts  = { reel: 1,    post: 1,     story: 1,     carrusel: 1    }
 
@@ -32,6 +36,7 @@ export default function WF1Ideas({ showToast }) {
   const [contexto, setContexto] = useState('')
   const [checked,  setChecked]  = useState(defaultChecked)
   const [counts,   setCounts]   = useState(defaultCounts)
+  const [duracion, setDuracion] = useState(30)
   const [loading,  setLoading]  = useState(false)
 
   const selectedAnillo = ANILLOS.find(a => a.n === anillo)
@@ -82,13 +87,15 @@ export default function WF1Ideas({ showToast }) {
     let text = `Anillo: ${anillo}\nCliente: ${clienteText}`
     if (contexto.trim()) text += `\nContexto: ${contexto.trim()}`
     text += `\nIdeas: ${ideasStr}`
+    // La duración sólo tiene sentido para Reels. WF1 la parsea como "Duración: N".
+    if (checked.reel) text += `\nDuración: ${duracion}`
 
     setLoading(true)
     try {
       const res = await callWebhook(WEBHOOKS.wf1, { text, chat_id: 'web' })
       showToast(res.message ?? `Ideas generadas para ${clienteSel.nombre} (Anillo ${anillo})`, 'success')
       setClienteCodigo(''); setContexto('')
-      setChecked(defaultChecked); setCounts(defaultCounts)
+      setChecked(defaultChecked); setCounts(defaultCounts); setDuracion(30)
     } catch (err) {
       showToast(err instanceof WebhookError ? err.message : 'No se pudo conectar con n8n.', 'error')
     } finally {
@@ -243,6 +250,37 @@ export default function WF1Ideas({ showToast }) {
           ))}
         </div>
       </div>
+
+      {/* Duración del Reel — sólo aparece si hay Reels seleccionados */}
+      {checked.reel && (
+        <div className="space-y-3 animate-fade-in">
+          <Label>
+            Duración de los Reels{' '}
+            <span className="normal-case font-normal text-muted-foreground/60">(segundos)</span>
+          </Label>
+          <div className="grid grid-cols-4 gap-2">
+            {DURACIONES.map(d => (
+              <button
+                key={d}
+                type="button"
+                onClick={() => setDuracion(d)}
+                className={cn(
+                  'flex items-center justify-center rounded-xl border py-3 text-sm font-bold transition-all duration-200',
+                  'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring',
+                  duracion === d
+                    ? 'border-primary bg-primary/10 text-primary shadow-sm'
+                    : 'border-border bg-card text-muted-foreground hover:border-primary/50 hover:text-foreground'
+                )}
+              >
+                {d}s
+              </button>
+            ))}
+          </div>
+          <p className="text-xs text-muted-foreground">
+            Se respeta en la idea, el <span className="font-semibold text-foreground">guion</span> y el contenido del Reel.
+          </p>
+        </div>
+      )}
 
       <Button type="submit" size="lg" className="w-full gap-2" disabled={loading || !clienteCodigo}>
         {loading
