@@ -1,9 +1,7 @@
-import { useState } from 'react'
-import { Sparkles, Loader2 } from 'lucide-react'
+import { useState, useEffect } from 'react'
+import { Sparkles, Loader2, RefreshCw } from 'lucide-react'
 import { Button }  from '@/components/ui/button'
-import { Input }   from '@/components/ui/input'
 import { Label }   from '@/components/ui/label'
-import { Badge }   from '@/components/ui/badge'
 import { cn }      from '@/lib/utils'
 import { callWebhook, WebhookError, WEBHOOKS } from '@/lib/webhooks'
 
@@ -27,13 +25,35 @@ const defaultCounts  = { reel: 1,    post: 1,     story: 1,     carrusel: 1    }
 
 export default function WF1Ideas({ showToast }) {
   const [anillo,   setAnillo]   = useState(1)
-  const [cliente,  setCliente]  = useState('')
+  const [clienteCodigo, setClienteCodigo] = useState('')
+  const [clientes,        setClientes]        = useState([])
+  const [clientesLoading, setClientesLoading] = useState(true)
+  const [clientesError,   setClientesError]   = useState(false)
   const [contexto, setContexto] = useState('')
   const [checked,  setChecked]  = useState(defaultChecked)
   const [counts,   setCounts]   = useState(defaultCounts)
   const [loading,  setLoading]  = useState(false)
 
   const selectedAnillo = ANILLOS.find(a => a.n === anillo)
+  const clienteSel     = clientes.find(c => c.codigo === clienteCodigo)
+
+  async function cargarClientes() {
+    setClientesLoading(true)
+    setClientesError(false)
+    try {
+      const res  = await fetch(WEBHOOKS.clientes, { method: 'GET' })
+      const data = await res.json().catch(() => ({}))
+      if (!res.ok) throw new Error(data.message || `Error ${res.status}`)
+      setClientes(Array.isArray(data.clientes) ? data.clientes : [])
+    } catch {
+      setClientesError(true)
+      showToast?.('No se pudo cargar la lista de clientes.', 'error')
+    } finally {
+      setClientesLoading(false)
+    }
+  }
+
+  useEffect(() => { cargarClientes() }, [])
 
   function toggleTipo(id) {
     setChecked(prev => ({ ...prev, [id]: !prev[id] }))
@@ -45,6 +65,10 @@ export default function WF1Ideas({ showToast }) {
 
   async function handleSubmit(e) {
     e.preventDefault()
+    if (!clienteSel) {
+      showToast('Seleccioná un cliente.', 'error')
+      return
+    }
     const activeTipos = TIPOS.filter(t => checked[t.id])
     if (!activeTipos.length) {
       showToast('Seleccioná al menos un tipo de idea.', 'error')
@@ -52,15 +76,18 @@ export default function WF1Ideas({ showToast }) {
     }
 
     const ideasStr = activeTipos.map(t => `${t.key} ${counts[t.id]}`).join(', ')
-    let text = `Anillo: ${anillo}\nCliente: ${cliente.trim()}`
+    // Mandamos "COD Nombre" (ej "NK Nike") para que WF1 resuelva el cliente con
+    // match exacto contra la carpeta/página "(COD) Nombre" y sin ambigüedad (el COD es único).
+    const clienteText = `${clienteSel.codigo} ${clienteSel.nombre}`
+    let text = `Anillo: ${anillo}\nCliente: ${clienteText}`
     if (contexto.trim()) text += `\nContexto: ${contexto.trim()}`
     text += `\nIdeas: ${ideasStr}`
 
     setLoading(true)
     try {
       const res = await callWebhook(WEBHOOKS.wf1, { text, chat_id: 'web' })
-      showToast(res.message ?? `Ideas generadas para ${cliente.trim()} (Anillo ${anillo})`, 'success')
-      setCliente(''); setContexto('')
+      showToast(res.message ?? `Ideas generadas para ${clienteSel.nombre} (Anillo ${anillo})`, 'success')
+      setClienteCodigo(''); setContexto('')
       setChecked(defaultChecked); setCounts(defaultCounts)
     } catch (err) {
       showToast(err instanceof WebhookError ? err.message : 'No se pudo conectar con n8n.', 'error')
@@ -102,16 +129,44 @@ export default function WF1Ideas({ showToast }) {
         )}
       </div>
 
-      {/* Cliente */}
+      {/* Cliente (selector — manda COD + nombre para resolución determinística) */}
       <div className="space-y-1.5">
-        <Label htmlFor="wf1-cliente">Cliente</Label>
-        <Input
+        <div className="flex items-center justify-between">
+          <Label htmlFor="wf1-cliente">Cliente</Label>
+          <button
+            type="button"
+            onClick={cargarClientes}
+            disabled={clientesLoading}
+            className="flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground disabled:opacity-50 transition-colors"
+          >
+            <RefreshCw className={cn('w-3 h-3', clientesLoading && 'animate-spin')} /> Actualizar
+          </button>
+        </div>
+        <select
           id="wf1-cliente"
-          value={cliente}
-          onChange={e => setCliente(e.target.value)}
-          placeholder="Ej: Nike"
+          value={clienteCodigo}
+          onChange={e => setClienteCodigo(e.target.value)}
           required
-        />
+          disabled={clientesLoading || clientesError}
+          className={cn(
+            'w-full rounded-lg border border-input bg-background px-3 py-2 text-sm',
+            'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:border-transparent',
+            'transition-all duration-200 disabled:opacity-60 disabled:cursor-not-allowed'
+          )}
+        >
+          <option value="" disabled>
+            {clientesLoading
+              ? 'Cargando clientes...'
+              : clientesError
+                ? 'Error al cargar — tocá Actualizar'
+                : 'Seleccioná un cliente'}
+          </option>
+          {clientes.map(c => (
+            <option key={c.codigo} value={c.codigo}>
+              {c.nombre} ({c.codigo})
+            </option>
+          ))}
+        </select>
       </div>
 
       {/* Contexto */}
@@ -189,7 +244,7 @@ export default function WF1Ideas({ showToast }) {
         </div>
       </div>
 
-      <Button type="submit" size="lg" className="w-full gap-2" disabled={loading || !cliente.trim()}>
+      <Button type="submit" size="lg" className="w-full gap-2" disabled={loading || !clienteCodigo}>
         {loading
           ? <><Loader2 className="w-4 h-4 animate-spin" /> Generando...</>
           : <><Sparkles className="w-4 h-4" /> Generar Ideas</>
