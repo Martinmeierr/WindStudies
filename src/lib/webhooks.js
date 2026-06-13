@@ -7,6 +7,8 @@ export const WEBHOOKS = {
   prospectos: 'https://n8n.fluyafragancias.com/webhook/windstudies-prospectos',
   // clientes: lista las carpetas (COD) Nombre del Drive raíz para el generador de links de sondeo (GET).
   clientes:   'https://n8n.fluyafragancias.com/webhook/windstudies-clientes',
+  // entrevista: recibe {codigo, nombre, notas} → Claude resume → escribe 02_ENTREVISTA en ONBOARDING.
+  entrevista: 'https://n8n.fluyafragancias.com/webhook/windstudies-entrevista',
 }
 
 export async function callWebhook(url, body) {

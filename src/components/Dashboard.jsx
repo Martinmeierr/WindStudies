@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { Wind, Sparkles, FolderOpen, UserPlus, Rocket, Link2, Users, LogOut } from 'lucide-react'
+import { Wind, Sparkles, FolderOpen, UserPlus, Rocket, Link2, Users, Mic, LogOut } from 'lucide-react'
 import { cn }        from '@/lib/utils'
 import { Button }    from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card'
@@ -10,6 +10,7 @@ import WF4NuevoCliente from '@/components/tabs/WF4NuevoCliente'
 import WF4v2NuevoCliente from '@/components/tabs/WF4v2NuevoCliente'
 import WFProspectos    from '@/components/tabs/WFProspectos'
 import GeneradorLinkSondeo from '@/components/tabs/GeneradorLinkSondeo'
+import WFEntrevista from '@/components/tabs/WFEntrevista'
 
 const TABS = [
   {
@@ -53,6 +54,13 @@ const TABS = [
     icon:  Link2,
     desc:  'Generá el link del Sondeo Previo para cada cliente, con el código embebido.',
     component: GeneradorLinkSondeo,
+  },
+  {
+    id:    'entrevista',
+    label: 'Entrevista',
+    icon:  Mic,
+    desc:  'Pegá las notas de la entrevista — Claude las resume y guarda como 02_ENTREVISTA en ONBOARDING.',
+    component: WFEntrevista,
   },
 ]
 
