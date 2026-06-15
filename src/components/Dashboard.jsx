@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { Wind, Sparkles, FolderOpen, Rocket, Link2, Users, Mic, LogOut } from 'lucide-react'
+import { Wind, Sparkles, FolderOpen, Rocket, Link2, Users, Mic, LogOut, BookText, BarChart3 } from 'lucide-react'
 import { cn }        from '@/lib/utils'
 import { Button }    from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card'
@@ -10,6 +10,8 @@ import WF4v2NuevoCliente from '@/components/tabs/WF4v2NuevoCliente'
 import WFProspectos    from '@/components/tabs/WFProspectos'
 import GeneradorLinkSondeo from '@/components/tabs/GeneradorLinkSondeo'
 import WFEntrevista from '@/components/tabs/WFEntrevista'
+import BitacoraTab     from '@/components/tabs/BitacoraTab'
+import SandcastleTab  from '@/components/tabs/SandcastleTab'
 
 const TABS = [
   {
@@ -53,6 +55,20 @@ const TABS = [
     icon:  Mic,
     desc:  'Pegá las notas de la entrevista — Claude las resume y guarda como 02_ENTREVISTA en ONBOARDING.',
     component: WFEntrevista,
+  },
+  {
+    id:    'bitacora',
+    label: 'Bitácora',
+    icon:  BookText,
+    desc:  'Actualizá o regenerá la bitácora viva del cliente con texto nuevo; la IA lo integra y archiva un snapshot fechado.',
+    component: BitacoraTab,
+  },
+  {
+    id:    'sandcastle',
+    label: 'Análisis Sandcastle',
+    icon:  BarChart3,
+    desc:  'Pegá el export de Sandcastle (CSV/JSON) y la IA lo analiza y lo escribe en 03_REDES o 04_ANALISIS del cliente.',
+    component: SandcastleTab,
   },
 ]
 
