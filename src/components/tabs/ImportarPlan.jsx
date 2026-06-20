@@ -220,7 +220,7 @@ export default function ImportarPlan({ showToast }) {
   }
 
   // clases compartidas de los <select> del preview
-  const selCls = 'w-full rounded border border-input bg-background px-1.5 py-1 text-xs focus:outline-none focus:ring-1 focus:ring-ring disabled:opacity-40'
+  const selCls = 'w-full rounded border border-input bg-background pl-1.5 pr-6 py-1 text-xs focus:outline-none focus:ring-1 focus:ring-ring disabled:opacity-40'
 
   return (
     <div className="space-y-7 animate-fade-in">
@@ -247,7 +247,7 @@ export default function ImportarPlan({ showToast }) {
           id="imp-cliente" value={clienteCodigo} onChange={e => setClienteCodigo(e.target.value)}
           required disabled={clientesLoading || clientesError}
           className={cn(
-            'w-full rounded-lg border border-input bg-background px-3 py-2 text-sm',
+            'w-full rounded-lg border border-input bg-background pl-3 pr-9 py-2 text-sm',
             'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:border-transparent',
             'transition-all duration-200 disabled:opacity-60 disabled:cursor-not-allowed'
           )}
