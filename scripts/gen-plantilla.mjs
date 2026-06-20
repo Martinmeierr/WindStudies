@@ -48,6 +48,6 @@ for (const nombre of hojas) {
   zip.file(nombre, xml)
 }
 
-const buf = await zip.generateAsync({ type: 'nodebuffer' })
+const buf = await zip.generateAsync({ type: 'nodebuffer', compression: 'DEFLATE', compressionOptions: { level: 6 } })
 writeFileSync(OUT, buf)
 console.log(`Plantilla generada (${hojas.length} hojas, validaciones limpias) → ${OUT}`)
