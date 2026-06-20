@@ -16,12 +16,13 @@ const SRC = '/Users/martin/Downloads/sheets-simple-template.xlsx'
 const OUT = new URL('../src/assets/plantilla-plan-windstudies.xlsx', import.meta.url).pathname
 
 // Columna → lista permitida (mismas opciones que el Módulo Generador de Ideas).
-// D=Tipo de pieza · E=Duración · F=Tipo de Story · G=Anillo · filas 6 a 105.
+// D=Tipo de pieza · E=Duración · F=Tipo de Story · G=Anillo · J=Cantidad de Slides (Carrusel) · filas 6 a 105.
 const LISTAS = [
   { col: 'D', vals: 'Reel,Post,Story,Carrusel' },
   { col: 'E', vals: '20,30,45,60' },
   { col: 'F', vals: 'informativa,encuesta,caja_de_pregunta,micro_impacto' },
   { col: 'G', vals: '1,2,3,4,5' },
+  { col: 'J', vals: '3,4,5,6,7,8,9,10' },
 ]
 const FILA_INI = 6
 const FILA_FIN = 105
@@ -45,6 +46,13 @@ for (const nombre of hojas) {
   } else {
     xml = xml.replace('</sheetData>', '</sheetData>' + BLOQUE)
   }
+
+  // Columna nueva "Cantidad de Slides" (J): header en la fila 5 como inline string
+  // (evita tocar sharedStrings). La validación J6:J105 ya va en el BLOQUE de arriba.
+  if (!xml.includes('r="J5"')) {
+    xml = xml.replace(/(<row r="5"[\s\S]*?)<\/row>/, '$1<c r="J5" s="7" t="inlineStr"><is><t>Cantidad de Slides</t></is></c></row>')
+  }
+
   zip.file(nombre, xml)
 }
 

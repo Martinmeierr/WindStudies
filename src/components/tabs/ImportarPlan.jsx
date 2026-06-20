@@ -11,6 +11,7 @@ import { callWebhook, WebhookError, WEBHOOKS } from '@/lib/webhooks'
 const TIPOS_PIEZA = ['Reel', 'Post', 'Story', 'Carrusel']
 const TIPOS_STORY = ['informativa', 'encuesta', 'caja_de_pregunta', 'micro_impacto']
 const DURACIONES  = [20, 30, 45, 60]            // sólo Reels (escala nueva)
+const SLIDES      = [3, 4, 5, 6, 7, 8, 9, 10]   // sólo Carrusel
 const ANILLOS     = [
   { n: 1, label: 'Emoción' }, { n: 2, label: 'Confianza' }, { n: 3, label: 'Educación' },
   { n: 4, label: 'Objeciones' }, { n: 5, label: 'Cierre' },
@@ -25,6 +26,7 @@ const H = {
   tipo_story:    'TIPO DE STORY',
   anillo:        'ANILLO',
   para_ad:       'PARA AD',
+  slides:        'Cantidad de Slides',
   observaciones: 'OBSERVACIONES ESTRATÉGICAS',
 }
 
@@ -65,6 +67,14 @@ function validar(f) {
     avisos.push(`Duración "${f.duracion}" se ignora (sólo aplica a Reels)`)
   if (pieza === 'reel' && f.duracion && !DURACIONES.includes(parseInt(f.duracion, 10)))
     avisos.push(`Duración "${f.duracion}" fuera de 20/30/45/60`)
+
+  // Cantidad de Slides sólo aplica a Carrusel.
+  if (f.slides && pieza !== 'carrusel')
+    avisos.push(`Cantidad de Slides "${f.slides}" se ignora (sólo aplica a Carrusel)`)
+  if (pieza === 'carrusel' && f.slides && !SLIDES.includes(parseInt(f.slides, 10)))
+    avisos.push(`Cantidad de Slides "${f.slides}" fuera de 3-10`)
+  if (pieza === 'carrusel' && !f.slides)
+    avisos.push('Carrusel sin cantidad de slides — el agente la elige')
 
   return { errores, avisos }
 }
@@ -134,6 +144,7 @@ export default function ImportarPlan({ showToast }) {
             tipo_story:    canonStory(at(row, idx.tipo_story)),
             anillo:        at(row, idx.anillo),
             para_ad:       at(row, idx.para_ad),
+            slides:        at(row, idx.slides),
             observaciones: at(row, idx.observaciones),
           }))
           .filter(f => f.tipo_pieza || f.anillo)   // descartamos preámbulo/filas vacías
@@ -174,6 +185,7 @@ export default function ImportarPlan({ showToast }) {
         tipo_story:    f.tipo_story,
         anillo:        f.anillo,
         para_ad:       f.para_ad,
+        slides:        f.slides,
         observaciones: f.observaciones,
       })),
     }
@@ -273,7 +285,7 @@ export default function ImportarPlan({ showToast }) {
             <table className="w-full text-xs">
               <thead className="bg-muted/50 text-muted-foreground">
                 <tr>
-                  {['Hoja', 'Tipo de pieza', 'Duración', 'Tipo de Story', 'Anillo', 'Para Ad', 'Observaciones', 'Estado'].map(h => (
+                  {['Hoja', 'Tipo de pieza', 'Duración', 'Tipo de Story', 'Slides', 'Anillo', 'Para Ad', 'Observaciones', 'Estado'].map(h => (
                     <th key={h} className="px-2 py-2 text-left font-semibold whitespace-nowrap">{h}</th>
                   ))}
                 </tr>
@@ -282,8 +294,9 @@ export default function ImportarPlan({ showToast }) {
                 {filas.map((f, i) => {
                   const err = f._val.errores.length > 0
                   const avi = !err && f._val.avisos.length > 0
-                  const esReel  = norm(f.tipo_pieza) === 'reel'
-                  const esStory = norm(f.tipo_pieza) === 'story'
+                  const esReel     = norm(f.tipo_pieza) === 'reel'
+                  const esStory    = norm(f.tipo_pieza) === 'story'
+                  const esCarrusel = norm(f.tipo_pieza) === 'carrusel'
                   return (
                     <tr key={i} className={cn('border-t border-border', err && 'bg-destructive/5', avi && 'bg-yellow-500/5')}>
                       <td className="px-2 py-1 whitespace-nowrap text-muted-foreground">{f.hoja}</td>
@@ -309,6 +322,14 @@ export default function ImportarPlan({ showToast }) {
                         <select className={selCls} disabled={!esStory} value={TIPOS_STORY.includes(f.tipo_story) ? f.tipo_story : ''} onChange={e => updateFila(i, 'tipo_story', e.target.value)}>
                           <option value="">—</option>
                           {TIPOS_STORY.map(t => <option key={t} value={t}>{t.replace(/_/g, ' ')}</option>)}
+                        </select>
+                      </td>
+
+                      {/* Slides (sólo Carrusel) */}
+                      <td className="px-2 py-1 min-w-[70px]">
+                        <select className={selCls} disabled={!esCarrusel} value={SLIDES.includes(parseInt(f.slides, 10)) ? String(parseInt(f.slides, 10)) : ''} onChange={e => updateFila(i, 'slides', e.target.value)}>
+                          <option value="">—</option>
+                          {SLIDES.map(s => <option key={s} value={s}>{s}</option>)}
                         </select>
                       </td>
 
