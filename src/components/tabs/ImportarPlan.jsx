@@ -23,6 +23,7 @@ const PARA_AD_PAUTA = ['C1', 'C2', 'C3', 'tofu', 'retargeting', 'bofu']
 
 // Headers que buscamos en la hoja (la fila de encabezados puede no ser la primera).
 const H = {
+  fecha:         'FECHA DE PUBLICACIÓN',
   tipo_pieza:    'TIPO DE PIEZA',
   duracion:      'DURACIÓN',
   tipo_story:    'TIPO DE STORY',
@@ -39,6 +40,19 @@ const norm = s => String(s ?? '').toLowerCase().normalize('NFD').replace(/[̀-ͯ
 
 // Canoniza el valor de Tipo de Story ("caja de pregunta" → "caja_de_pregunta").
 const canonStory = v => norm(v) ? String(v).trim().toLowerCase().replace(/\s+/g, '_').replace('caja_pregunta', 'caja_de_pregunta') : ''
+
+// Formatea la FECHA DE PUBLICACIÓN a "DD/MM". Acepta serial de Excel (número),
+// strings "01/06", "1-6", "01/06/2026". Vacío o irreconocible → '' / tal cual.
+function fmtFecha(raw) {
+  if (raw == null || raw === '') return ''
+  const n = Number(raw)
+  if (Number.isFinite(n) && n > 30000 && n < 100000) {            // serial de Excel
+    const d = new Date(Date.UTC(1899, 11, 30) + Math.round(n) * 86400000)
+    if (!isNaN(d)) return String(d.getUTCDate()).padStart(2, '0') + '/' + String(d.getUTCMonth() + 1).padStart(2, '0')
+  }
+  const m = String(raw).trim().match(/(\d{1,2})[/\-.](\d{1,2})/)   // "DD/MM" o "DD/MM/AAAA"
+  return m ? m[1].padStart(2, '0') + '/' + m[2].padStart(2, '0') : String(raw).trim()
+}
 
 // Valida una fila. Devuelve { errores[], avisos[] }. Error bloquea; aviso no.
 function validar(f) {
@@ -153,6 +167,7 @@ export default function ImportarPlan({ showToast }) {
         const at = (row, i) => (i >= 0 && row[i] != null ? String(row[i]).trim() : '')
         return rows.slice(headerIdx + 1)
           .map(row => ({
+            fecha:         fmtFecha(row[idx.fecha]),
             tipo_pieza:    at(row, idx.tipo_pieza),
             duracion:      at(row, idx.duracion),
             tipo_story:    canonStory(at(row, idx.tipo_story)),
@@ -196,6 +211,7 @@ export default function ImportarPlan({ showToast }) {
       cliente: `${clienteSel.codigo} ${clienteSel.nombre}`,
       filas: filas.map(f => ({
         hoja:          f.hoja,
+        fecha:         f.fecha,
         tipo_pieza:    f.tipo_pieza,
         duracion:      f.duracion,
         tipo_story:    f.tipo_story,
@@ -303,7 +319,7 @@ export default function ImportarPlan({ showToast }) {
             <table className="w-full text-xs">
               <thead className="bg-muted/50 text-muted-foreground">
                 <tr>
-                  {['Hoja', 'Tipo de pieza', 'Duración', 'Tipo de Story', 'Tipo de Reel', 'Tipo de Carrusel', 'Slides', 'Anillo', 'Para Ad', 'Observaciones', 'Estado'].map(h => (
+                  {['Hoja', 'Fecha', 'Tipo de pieza', 'Duración', 'Tipo de Story', 'Tipo de Reel', 'Tipo de Carrusel', 'Slides', 'Anillo', 'Para Ad', 'Observaciones', 'Estado'].map(h => (
                     <th key={h} className="px-2 py-2 text-left font-semibold whitespace-nowrap">{h}</th>
                   ))}
                 </tr>
@@ -318,6 +334,7 @@ export default function ImportarPlan({ showToast }) {
                   return (
                     <tr key={i} className={cn('border-t border-border', err && 'bg-destructive/5', avi && 'bg-yellow-500/5')}>
                       <td className="px-2 py-1 whitespace-nowrap text-muted-foreground">{f.hoja}</td>
+                      <td className="px-2 py-1 whitespace-nowrap font-medium">{f.fecha || <span className="text-muted-foreground">—</span>}</td>
 
                       {/* Tipo de pieza */}
                       <td className="px-2 py-1 min-w-[110px]">
