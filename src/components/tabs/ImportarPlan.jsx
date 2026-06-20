@@ -303,7 +303,7 @@ export default function ImportarPlan({ showToast }) {
             <table className="w-full text-xs">
               <thead className="bg-muted/50 text-muted-foreground">
                 <tr>
-                  {['Hoja', 'Tipo de pieza', 'Duración', 'Tipo de Story', 'Slides', 'Tipo de Reel', 'Tipo de Carrusel', 'Anillo', 'Para Ad', 'Observaciones', 'Estado'].map(h => (
+                  {['Hoja', 'Tipo de pieza', 'Duración', 'Tipo de Story', 'Tipo de Reel', 'Tipo de Carrusel', 'Slides', 'Anillo', 'Para Ad', 'Observaciones', 'Estado'].map(h => (
                     <th key={h} className="px-2 py-2 text-left font-semibold whitespace-nowrap">{h}</th>
                   ))}
                 </tr>
@@ -343,14 +343,6 @@ export default function ImportarPlan({ showToast }) {
                         </select>
                       </td>
 
-                      {/* Slides (sólo Carrusel) */}
-                      <td className="px-2 py-1 min-w-[70px]">
-                        <select className={selCls} disabled={!esCarrusel} value={SLIDES.includes(parseInt(f.slides, 10)) ? String(parseInt(f.slides, 10)) : ''} onChange={e => updateFila(i, 'slides', e.target.value)}>
-                          <option value="">—</option>
-                          {SLIDES.map(s => <option key={s} value={s}>{s}</option>)}
-                        </select>
-                      </td>
-
                       {/* Tipo de Reel (sólo Reel) */}
                       <td className="px-2 py-1 min-w-[150px]">
                         <select className={selCls} disabled={!esReel} value={TIPOS_REEL.find(t => norm(t) === norm(f.tipo_reel)) || ''} onChange={e => updateFila(i, 'tipo_reel', e.target.value)}>
@@ -364,6 +356,14 @@ export default function ImportarPlan({ showToast }) {
                         <select className={selCls} disabled={!esCarrusel} value={TIPOS_CARRUSEL.find(t => norm(t) === norm(f.tipo_carrusel)) || ''} onChange={e => updateFila(i, 'tipo_carrusel', e.target.value)}>
                           <option value="">—</option>
                           {TIPOS_CARRUSEL.map(t => <option key={t} value={t}>{t}</option>)}
+                        </select>
+                      </td>
+
+                      {/* Slides (sólo Carrusel) */}
+                      <td className="px-2 py-1 min-w-[70px]">
+                        <select className={selCls} disabled={!esCarrusel} value={SLIDES.includes(parseInt(f.slides, 10)) ? String(parseInt(f.slides, 10)) : ''} onChange={e => updateFila(i, 'slides', e.target.value)}>
+                          <option value="">—</option>
+                          {SLIDES.map(s => <option key={s} value={s}>{s}</option>)}
                         </select>
                       </td>
 
