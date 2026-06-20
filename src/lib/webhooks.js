@@ -10,6 +10,9 @@ export const WEBHOOKS = {
   entrevista: 'https://n8n.fluyafragancias.com/webhook/windstudies-entrevista',
   bitacora:   'https://n8n.fluyafragancias.com/webhook/windstudies-bitacora',
   sandcastle: 'https://n8n.fluyafragancias.com/webhook/windstudies-sandcastle',
+  // import: recibe {cliente, filas[]} del plan mensual (XLSX parseado en el panel) →
+  // por cada fila corre el Generador de Ideas y crea la Idea en Notion (Borrador).
+  import:     'https://n8n.fluyafragancias.com/webhook/windstudies-import',
 }
 
 export async function fetchClientes() {

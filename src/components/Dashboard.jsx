@@ -1,10 +1,11 @@
 import { useState } from 'react'
-import { Wind, Sparkles, FolderOpen, Rocket, Link2, Users, Mic, LogOut, BookText, BarChart3 } from 'lucide-react'
+import { Wind, Sparkles, FolderOpen, Rocket, Link2, Users, Mic, LogOut, BookText, BarChart3, FileSpreadsheet } from 'lucide-react'
 import { cn }        from '@/lib/utils'
 import { Button }    from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card'
 import { Separator } from '@/components/ui/separator'
 import WF1Ideas        from '@/components/tabs/WF1Ideas'
+import ImportarPlan     from '@/components/tabs/ImportarPlan'
 import WF3Onboarding   from '@/components/tabs/WF3Onboarding'
 import WF4v2NuevoCliente from '@/components/tabs/WF4v2NuevoCliente'
 import WFProspectos    from '@/components/tabs/WFProspectos'
@@ -20,6 +21,13 @@ const TABS = [
     icon:  Sparkles,
     desc:  'Generá ideas de contenido para un cliente según el anillo estratégico.',
     component: WF1Ideas,
+  },
+  {
+    id:    'importar',
+    label: 'Importar Plan',
+    icon:  FileSpreadsheet,
+    desc:  'Subí el plan mensual (XLSX) y generá todas las ideas en Notion (Borrador) de una.',
+    component: ImportarPlan,
   },
   {
     id:    'wf3',
