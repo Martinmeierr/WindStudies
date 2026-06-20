@@ -22,7 +22,7 @@ const TIPOS = [
 
 // Duraciones (segundos) — sólo aplican a Reels. Viajan como "Duración: N" en el
 // payload; WF1 las parsea (duracion_seg) y bajan al guion/contenido vía la idea.
-const DURACIONES = [5, 10, 20, 30]
+const DURACIONES = [20, 30, 45, 60]
 
 const defaultChecked = { reel: true, post: false, story: false, carrusel: false }
 const defaultCounts  = { reel: 1,    post: 1,     story: 1,     carrusel: 1    }
