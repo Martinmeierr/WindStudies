@@ -12,6 +12,8 @@ const TIPOS_PIEZA = ['Reel', 'Post', 'Story', 'Carrusel']
 const TIPOS_STORY = ['informativa', 'encuesta', 'caja_de_pregunta', 'micro_impacto']
 const DURACIONES  = [20, 30, 45, 60]            // sólo Reels (escala nueva)
 const SLIDES      = [3, 4, 5, 6, 7, 8, 9, 10]   // sólo Carrusel
+const TIPOS_REEL     = ['Talking head', 'UGC / testimonio', 'Tutorial / educativo', 'Trend / audio viral'] // sólo Reel
+const TIPOS_CARRUSEL = ['Educativo / tips', 'Storytelling', 'Antes / después', 'Listicle']                 // sólo Carrusel
 const ANILLOS     = [
   { n: 1, label: 'Emoción' }, { n: 2, label: 'Confianza' }, { n: 3, label: 'Educación' },
   { n: 4, label: 'Objeciones' }, { n: 5, label: 'Cierre' },
@@ -27,6 +29,8 @@ const H = {
   anillo:        'ANILLO',
   para_ad:       'PARA AD',
   slides:        'Cantidad de Slides',
+  tipo_reel:     'Tipo de Reel',
+  tipo_carrusel: 'Tipo de Carrusel',
   observaciones: 'OBSERVACIONES ESTRATÉGICAS',
 }
 
@@ -75,6 +79,16 @@ function validar(f) {
     avisos.push(`Cantidad de Slides "${f.slides}" fuera de 3-10`)
   if (pieza === 'carrusel' && !f.slides)
     avisos.push('Carrusel sin cantidad de slides — el agente la elige')
+
+  // Tipo de Reel sólo aplica a Reel; Tipo de Carrusel sólo a Carrusel.
+  if (f.tipo_reel && pieza !== 'reel')
+    avisos.push(`Tipo de Reel "${f.tipo_reel}" se ignora (sólo aplica a Reel)`)
+  if (f.tipo_reel && !TIPOS_REEL.map(norm).includes(norm(f.tipo_reel)))
+    avisos.push(`Tipo de Reel "${f.tipo_reel}" no es un valor conocido`)
+  if (f.tipo_carrusel && pieza !== 'carrusel')
+    avisos.push(`Tipo de Carrusel "${f.tipo_carrusel}" se ignora (sólo aplica a Carrusel)`)
+  if (f.tipo_carrusel && !TIPOS_CARRUSEL.map(norm).includes(norm(f.tipo_carrusel)))
+    avisos.push(`Tipo de Carrusel "${f.tipo_carrusel}" no es un valor conocido`)
 
   return { errores, avisos }
 }
@@ -145,6 +159,8 @@ export default function ImportarPlan({ showToast }) {
             anillo:        at(row, idx.anillo),
             para_ad:       at(row, idx.para_ad),
             slides:        at(row, idx.slides),
+            tipo_reel:     at(row, idx.tipo_reel),
+            tipo_carrusel: at(row, idx.tipo_carrusel),
             observaciones: at(row, idx.observaciones),
           }))
           .filter(f => f.tipo_pieza || f.anillo)   // descartamos preámbulo/filas vacías
@@ -186,6 +202,8 @@ export default function ImportarPlan({ showToast }) {
         anillo:        f.anillo,
         para_ad:       f.para_ad,
         slides:        f.slides,
+        tipo_reel:     f.tipo_reel,
+        tipo_carrusel: f.tipo_carrusel,
         observaciones: f.observaciones,
       })),
     }
@@ -285,7 +303,7 @@ export default function ImportarPlan({ showToast }) {
             <table className="w-full text-xs">
               <thead className="bg-muted/50 text-muted-foreground">
                 <tr>
-                  {['Hoja', 'Tipo de pieza', 'Duración', 'Tipo de Story', 'Slides', 'Anillo', 'Para Ad', 'Observaciones', 'Estado'].map(h => (
+                  {['Hoja', 'Tipo de pieza', 'Duración', 'Tipo de Story', 'Slides', 'Tipo de Reel', 'Tipo de Carrusel', 'Anillo', 'Para Ad', 'Observaciones', 'Estado'].map(h => (
                     <th key={h} className="px-2 py-2 text-left font-semibold whitespace-nowrap">{h}</th>
                   ))}
                 </tr>
@@ -330,6 +348,22 @@ export default function ImportarPlan({ showToast }) {
                         <select className={selCls} disabled={!esCarrusel} value={SLIDES.includes(parseInt(f.slides, 10)) ? String(parseInt(f.slides, 10)) : ''} onChange={e => updateFila(i, 'slides', e.target.value)}>
                           <option value="">—</option>
                           {SLIDES.map(s => <option key={s} value={s}>{s}</option>)}
+                        </select>
+                      </td>
+
+                      {/* Tipo de Reel (sólo Reel) */}
+                      <td className="px-2 py-1 min-w-[150px]">
+                        <select className={selCls} disabled={!esReel} value={TIPOS_REEL.find(t => norm(t) === norm(f.tipo_reel)) || ''} onChange={e => updateFila(i, 'tipo_reel', e.target.value)}>
+                          <option value="">—</option>
+                          {TIPOS_REEL.map(t => <option key={t} value={t}>{t}</option>)}
+                        </select>
+                      </td>
+
+                      {/* Tipo de Carrusel (sólo Carrusel) */}
+                      <td className="px-2 py-1 min-w-[150px]">
+                        <select className={selCls} disabled={!esCarrusel} value={TIPOS_CARRUSEL.find(t => norm(t) === norm(f.tipo_carrusel)) || ''} onChange={e => updateFila(i, 'tipo_carrusel', e.target.value)}>
+                          <option value="">—</option>
+                          {TIPOS_CARRUSEL.map(t => <option key={t} value={t}>{t}</option>)}
                         </select>
                       </td>
 

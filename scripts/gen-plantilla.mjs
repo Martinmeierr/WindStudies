@@ -23,6 +23,8 @@ const LISTAS = [
   { col: 'F', vals: 'informativa,encuesta,caja_de_pregunta,micro_impacto' },
   { col: 'G', vals: '1,2,3,4,5' },
   { col: 'J', vals: '3,4,5,6,7,8,9,10' },
+  { col: 'K', vals: 'Talking head,UGC / testimonio,Tutorial / educativo,Trend / audio viral' },
+  { col: 'L', vals: 'Educativo / tips,Storytelling,Antes / después,Listicle' },
 ]
 const FILA_INI = 6
 const FILA_FIN = 105
@@ -47,10 +49,17 @@ for (const nombre of hojas) {
     xml = xml.replace('</sheetData>', '</sheetData>' + BLOQUE)
   }
 
-  // Columna nueva "Cantidad de Slides" (J): header en la fila 5 como inline string
-  // (evita tocar sharedStrings). La validación J6:J105 ya va en el BLOQUE de arriba.
-  if (!xml.includes('r="J5"')) {
-    xml = xml.replace(/(<row r="5"[\s\S]*?)<\/row>/, '$1<c r="J5" s="7" t="inlineStr"><is><t>Cantidad de Slides</t></is></c></row>')
+  // Columnas nuevas (J/K/L): headers en la fila 5 como inline string (evita tocar
+  // sharedStrings). Las validaciones J/K/L ya van en el BLOQUE de arriba.
+  const headersNuevos = [
+    ['J5', 'Cantidad de Slides'],
+    ['K5', 'Tipo de Reel'],
+    ['L5', 'Tipo de Carrusel'],
+  ]
+  for (const [ref, label] of headersNuevos) {
+    if (!xml.includes(`r="${ref}"`)) {
+      xml = xml.replace(/(<row r="5"[\s\S]*?)<\/row>/, `$1<c r="${ref}" s="7" t="inlineStr"><is><t>${label}</t></is></c></row>`)
+    }
   }
 
   zip.file(nombre, xml)
