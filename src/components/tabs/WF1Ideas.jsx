@@ -23,6 +23,12 @@ const TIPOS = [
 // Duraciones (segundos) — sólo aplican a Reels. Viajan como "Duración: N" en el
 // payload; WF1 las parsea (duracion_seg) y bajan al guion/contenido vía la idea.
 const DURACIONES = [20, 30, 45, 60]
+// Subtipos por pieza (mismas opciones que el import). En el Modo Manual son GLOBALES:
+// el valor elegido aplica a TODAS las piezas de ese tipo del lote.
+const TIPOS_STORY    = ['informativa', 'encuesta', 'caja_de_pregunta', 'micro_impacto']
+const TIPOS_REEL     = ['Talking head', 'UGC / testimonio', 'Tutorial / educativo', 'Trend / audio viral']
+const TIPOS_CARRUSEL = ['Educativo / tips', 'Storytelling', 'Antes / después', 'Listicle']
+const SLIDES         = [3, 4, 5, 6, 7, 8, 9, 10]
 
 const defaultChecked = { reel: true, post: false, story: false, carrusel: false }
 const defaultCounts  = { reel: 1,    post: 1,     story: 1,     carrusel: 1    }
@@ -37,6 +43,10 @@ export default function WF1Ideas({ showToast }) {
   const [checked,  setChecked]  = useState(defaultChecked)
   const [counts,   setCounts]   = useState(defaultCounts)
   const [duracion, setDuracion] = useState(30)
+  const [tipoStory,    setTipoStory]    = useState('')
+  const [tipoReel,     setTipoReel]     = useState('')
+  const [tipoCarrusel, setTipoCarrusel] = useState('')
+  const [slides,       setSlides]       = useState('')
   const [loading,  setLoading]  = useState(false)
 
   const selectedAnillo = ANILLOS.find(a => a.n === anillo)
@@ -89,6 +99,11 @@ export default function WF1Ideas({ showToast }) {
     text += `\nIdeas: ${ideasStr}`
     // La duración sólo tiene sentido para Reels. WF1 la parsea como "Duración: N".
     if (checked.reel) text += `\nDuración: ${duracion}`
+    // Subtipos globales: aplican a todas las piezas de ese tipo.
+    if (checked.reel && tipoReel)         text += `\nTipoReel: ${tipoReel}`
+    if (checked.story && tipoStory)       text += `\nTipoStory: ${tipoStory}`
+    if (checked.carrusel && tipoCarrusel) text += `\nTipoCarrusel: ${tipoCarrusel}`
+    if (checked.carrusel && slides)       text += `\nSlides: ${slides}`
 
     setLoading(true)
     try {
@@ -96,12 +111,15 @@ export default function WF1Ideas({ showToast }) {
       showToast(res.message ?? `Ideas generadas para ${clienteSel.nombre} (Anillo ${anillo})`, 'success')
       setClienteCodigo(''); setContexto('')
       setChecked(defaultChecked); setCounts(defaultCounts); setDuracion(30)
+      setTipoStory(''); setTipoReel(''); setTipoCarrusel(''); setSlides('')
     } catch (err) {
       showToast(err instanceof WebhookError ? err.message : 'No se pudo conectar con n8n.', 'error')
     } finally {
       setLoading(false)
     }
   }
+
+  const selectCls = 'w-full rounded-lg border border-input bg-background pl-3 pr-9 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:border-transparent transition-all'
 
   return (
     <form onSubmit={handleSubmit} className="space-y-7 animate-fade-in">
@@ -279,6 +297,48 @@ export default function WF1Ideas({ showToast }) {
           <p className="text-xs text-muted-foreground">
             Se respeta en la idea, el <span className="font-semibold text-foreground">guion</span> y el contenido del Reel.
           </p>
+        </div>
+      )}
+
+      {/* Tipo de Reel — global, aplica a todos los Reels */}
+      {checked.reel && (
+        <div className="space-y-1.5 animate-fade-in">
+          <Label>Tipo de Reel <span className="normal-case font-normal text-muted-foreground/60">(aplica a todos los Reels)</span></Label>
+          <select value={tipoReel} onChange={e => setTipoReel(e.target.value)} className={selectCls}>
+            <option value="">Sin especificar (el agente elige)</option>
+            {TIPOS_REEL.map(t => <option key={t} value={t}>{t}</option>)}
+          </select>
+        </div>
+      )}
+
+      {/* Tipo de Story — global, aplica a todas las Stories */}
+      {checked.story && (
+        <div className="space-y-1.5 animate-fade-in">
+          <Label>Tipo de Story <span className="normal-case font-normal text-muted-foreground/60">(aplica a todas las Stories)</span></Label>
+          <select value={tipoStory} onChange={e => setTipoStory(e.target.value)} className={selectCls}>
+            <option value="">Sin especificar (el agente elige)</option>
+            {TIPOS_STORY.map(t => <option key={t} value={t}>{t.replace(/_/g, ' ')}</option>)}
+          </select>
+        </div>
+      )}
+
+      {/* Tipo de Carrusel + Cantidad de Slides — globales, aplican a todos los Carruseles */}
+      {checked.carrusel && (
+        <div className="grid grid-cols-2 gap-3 animate-fade-in">
+          <div className="space-y-1.5">
+            <Label>Tipo de Carrusel <span className="normal-case font-normal text-muted-foreground/60">(todos)</span></Label>
+            <select value={tipoCarrusel} onChange={e => setTipoCarrusel(e.target.value)} className={selectCls}>
+              <option value="">Sin especificar</option>
+              {TIPOS_CARRUSEL.map(t => <option key={t} value={t}>{t}</option>)}
+            </select>
+          </div>
+          <div className="space-y-1.5">
+            <Label>Cantidad de Slides <span className="normal-case font-normal text-muted-foreground/60">(todos)</span></Label>
+            <select value={slides} onChange={e => setSlides(e.target.value)} className={selectCls}>
+              <option value="">Sin especificar</option>
+              {SLIDES.map(s => <option key={s} value={s}>{s}</option>)}
+            </select>
+          </div>
         </div>
       )}
 
