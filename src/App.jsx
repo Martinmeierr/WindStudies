@@ -34,7 +34,7 @@ export default function App() {
   }
 
   return (
-    <div className="dark">
+    <div>
       {auth
         ? <Dashboard logout={logout} showToast={showToast} />
         : <Login onLogin={login} />
