@@ -1,11 +1,13 @@
 import { useState } from 'react'
-import { Wind, Sparkles, FolderOpen, Rocket, Link2, Users, Mic, LogOut, BookText, BarChart3, FileSpreadsheet } from 'lucide-react'
+import { Wind, Sparkles, FolderOpen, Rocket, Link2, Users, Mic, LogOut, BookText, BarChart3, FileSpreadsheet, Wand2 } from 'lucide-react'
 import { cn }        from '@/lib/utils'
 import { Button }    from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card'
 import { Separator } from '@/components/ui/separator'
 import WF1Ideas        from '@/components/tabs/WF1Ideas'
+import WF1IdeasV2      from '@/components/tabs/WF1IdeasV2'
 import ImportarPlan     from '@/components/tabs/ImportarPlan'
+import ImportarPlanV2  from '@/components/tabs/ImportarPlanV2'
 import WF3Onboarding   from '@/components/tabs/WF3Onboarding'
 import WF4v2NuevoCliente from '@/components/tabs/WF4v2NuevoCliente'
 import WFProspectos    from '@/components/tabs/WFProspectos'
@@ -23,11 +25,25 @@ const TABS = [
     component: WF1Ideas,
   },
   {
+    id:    'wf1v2',
+    label: 'Generador de Ideas v2',
+    icon:  Wand2,
+    desc:  'Generá ideas con 4 agentes por tipo, sin auto-stories y con guion del reel.',
+    component: WF1IdeasV2,
+  },
+  {
     id:    'importar',
     label: 'Importar Plan',
     icon:  FileSpreadsheet,
     desc:  'Subí el plan mensual (XLSX) y generá todas las ideas en Notion (Borrador) de una.',
     component: ImportarPlan,
+  },
+  {
+    id:    'importv2',
+    label: 'Importar Plan v2',
+    icon:  FileSpreadsheet,
+    desc:  'Importá el plan mensual (XLSX) con 4 agentes por tipo, sin auto-stories y con guion del reel.',
+    component: ImportarPlanV2,
   },
   {
     id:    'wf3',

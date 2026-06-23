@@ -13,6 +13,10 @@ export const WEBHOOKS = {
   // import: recibe {cliente, filas[]} del plan mensual (XLSX parseado en el panel) →
   // por cada fila corre el Generador de Ideas y crea la Idea en Notion (Borrador).
   import:     'https://n8n.fluyafragancias.com/webhook/windstudies-import',
+  // wf1v2: Generador de Ideas v2 — 4 agentes dedicados por tipo, sin auto-stories, el reel genera guion.
+  wf1v2:      'https://n8n.fluyafragancias.com/webhook/windstudies-wf1-v2',
+  // importv2: Importar Plan v2 — mismo payload que import, contra el WF v2 (4 agentes por tipo, sin auto-stories, guion del reel).
+  importv2:   'https://n8n.fluyafragancias.com/webhook/windstudies-import-v2',
 }
 
 export async function fetchClientes() {
