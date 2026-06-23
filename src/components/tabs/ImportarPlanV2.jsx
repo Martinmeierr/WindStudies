@@ -4,6 +4,7 @@ import { Upload, Download, FileSpreadsheet, AlertTriangle, Loader2, RefreshCw, S
 import plantillaUrl from '@/assets/plantilla-plan-windstudies.xlsx?url'
 import { Button } from '@/components/ui/button'
 import { Label }  from '@/components/ui/label'
+import HelpV2     from '@/components/ui/HelpV2'
 import { cn }     from '@/lib/utils'
 import { callWebhook, WebhookError, WEBHOOKS } from '@/lib/webhooks'
 
@@ -240,6 +241,18 @@ export default function ImportarPlanV2({ showToast }) {
 
   return (
     <div className="space-y-7 animate-fade-in">
+
+      {/* Helper — explica el comportamiento real del módulo v2 (Import desde XLSX) */}
+      <HelpV2
+        title="Cómo funciona este módulo v2"
+        items={[
+          <>Cada fila del plan (XLSX) se convierte en un <span className="font-semibold text-foreground">Contenido</span>, respetando su fecha de publicación.</>,
+          <>Usa <span className="font-semibold text-foreground">4 agentes dedicados</span>, uno por tipo de pieza (Reel, Story, Carrusel, Post). Cada uno genera su contenido con su propio criterio.</>,
+          <>Ya <span className="font-semibold text-foreground">no</span> se autogeneran 2 Stories por cada Reel/Post: se crea sólo lo que esté en el plan.</>,
+          <>Escribe <span className="font-semibold text-foreground">directo en la tabla Contenido</span> (estado Borrador). No pasa por la tabla de Ideas ni por la aprobación: el contenido queda listo para producción.</>,
+          <>Si la pieza es un Reel, además genera su <span className="font-semibold text-foreground">Guion</span> automáticamente (tabla Guiones, Borrador / No grabado).</>,
+        ]}
+      />
 
       {/* Descargar plantilla — arriba a la derecha */}
       <div className="flex justify-end">

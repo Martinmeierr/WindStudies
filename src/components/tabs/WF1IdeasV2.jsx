@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import { Sparkles, Loader2, RefreshCw } from 'lucide-react'
 import { Button }  from '@/components/ui/button'
 import { Label }   from '@/components/ui/label'
+import HelpV2      from '@/components/ui/HelpV2'
 import { cn }      from '@/lib/utils'
 import { callWebhook, WebhookError, WEBHOOKS } from '@/lib/webhooks'
 
@@ -123,6 +124,17 @@ export default function WF1IdeasV2({ showToast }) {
 
   return (
     <form onSubmit={handleSubmit} className="space-y-7 animate-fade-in">
+
+      {/* Helper — explica el comportamiento real del módulo v2 (Generador manual) */}
+      <HelpV2
+        title="Cómo funciona este módulo v2"
+        items={[
+          <>Usa <span className="font-semibold text-foreground">4 agentes dedicados</span>, uno por tipo de pieza (Reel, Story, Carrusel, Post). Cada uno genera su contenido con su propio criterio.</>,
+          <>Ya <span className="font-semibold text-foreground">no</span> se autogeneran 2 Stories por cada Reel/Post: se crea sólo la cantidad que pidas de cada tipo.</>,
+          <>Escribe <span className="font-semibold text-foreground">directo en la tabla Contenido</span> (estado Borrador). No pasa por la tabla de Ideas ni por la aprobación: el contenido queda listo para producción.</>,
+          <>Si la pieza es un Reel, además genera su <span className="font-semibold text-foreground">Guion</span> automáticamente (tabla Guiones, Borrador / No grabado).</>,
+        ]}
+      />
 
       {/* Anillo */}
       <div className="space-y-3">
